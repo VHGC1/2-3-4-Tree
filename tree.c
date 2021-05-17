@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "tree.h"
-#include<stdbool.h>
+#include <stdbool.h>
 
 void insert(int key){
 	struct no *newnode;
@@ -45,28 +45,28 @@ enum KeyStatus ins(struct no *ptr, int key, int *upKey, struct no **newnode){
 	
 	if (value != InsertIt)
 		return value;
-	/*If keys in no is less than M-1 where M is order of B tree*/
 	
 	if (n < M - 1){
+		
 		pos = searchPos(newKey, ptr->keys, n);
-		/*Shifting the key and pointer right for inserting the new key*/
+		
 		for (i = n; i>pos; i--){
-			ptr->keys[i] = ptr->keys[i - 1];
+			ptr->keys[i] = ptr->keys[i - 1]; /*Mudando a chave e o ponteiro para inserir nova chave*/
 			ptr->p[i + 1] = ptr->p[i];
 		}
-		/*Key is inserted at exact location*/
+		
 		ptr->keys[pos] = newKey;
 		ptr->p[pos + 1] = newPtr;
-		++ptr->n; /*incrementing the number of keys in no*/
+		++ptr->n; /*mudando o numero de chaves em no*/
 		return Success;
-	}/*End of if */
-	 /*If keys in nodes are maximum and position of no to be inserted is last*/
+	}
+	 /*Se as chaves nos nós forem maximo e a posição for a ultima pra ser inserida no no*/
 	if (pos == M - 1){
 		lastKey = newKey;
 		lastPtr = newPtr;
 	}
-	else /*If keys in no are maximum and position of no to be inserted is not last*/
-	{
+	/*Se as chaves em no foram maximo e a posição do no não for pra ser inserida no ultimo*/
+	else{  
 		lastKey = ptr->keys[M - 2];
 		lastPtr = ptr->p[M - 1];
 		for (i = M - 2; i>pos; i--){
@@ -79,9 +79,9 @@ enum KeyStatus ins(struct no *ptr, int key, int *upKey, struct no **newnode){
 	splitPos = (M - 1) / 2;
 	(*upKey) = ptr->keys[splitPos];
 
-	(*newnode) = malloc(sizeof(struct no));/*Right no after split*/
-	ptr->n = splitPos; /*No. of keys for left splitted no*/
-	(*newnode)->n = M - 1 - splitPos;/*No. of keys for right splitted no*/
+	(*newnode) = malloc(sizeof(struct no));/*no direito despois do split*/
+	ptr->n = splitPos; /*numero de chaves para o no esquerdo dividido*/
+	(*newnode)->n = M - 1 - splitPos;/*numero de chaves para o no direito dividido*/ 
 	for (i = 0; i < (*newnode)->n; i++){
 		(*newnode)->p[i] = ptr->p[i + splitPos + 1];
 		if (i < (*newnode)->n - 1)
@@ -91,7 +91,7 @@ enum KeyStatus ins(struct no *ptr, int key, int *upKey, struct no **newnode){
 	}
 	(*newnode)->p[(*newnode)->n] = lastPtr;
 	return InsertIt;
-}/*End of ins()*/
+}
 
 void imprimir(struct no *ptr, int blanks){
 	if (ptr){
@@ -105,28 +105,7 @@ void imprimir(struct no *ptr, int blanks){
 			imprimir(ptr->p[i], blanks + 10);
 	}
 }
-/*
-bool eFolha(struct no **atual){
-	if((*atual)->p[0] == 0)
-		return true;
-	else
-		return false;	
-}
 
-void imprimir1(struct no *atual){
-	int quant = atual->n;
-
-	for(int i = 0; i < quant; i++){
-		printf("%d", atual->keys[i]);
-		printf("\n");
-	}
-	if(!eFolha(&atual)){
-		for(int i = 0; i <= quant; i++){
-			imprimir1(atual->p[i]);
-		}
-	}
-}
-*/
 void search(int key){
 	int pos, i, n;
 	struct no *ptr = root;
@@ -138,12 +117,13 @@ void search(int key){
 		printf("\n");
 		pos = searchPos(key, ptr->keys, n);
 		if (pos < n && key == ptr->keys[pos]){
-			printf("Key %d found in position %d of last dispalyed no\n", key, i);
+			
+			printf("Chave %d encontrada na posicao %d do ultimo no impresso\n", key, i);
 			return;
 		}
 		ptr = ptr->p[pos];
 	}
-	printf("Key %d is not available\n", key);
+	printf("Chave %d não disponivel\n", key);
 }
 
 int searchPos(int key, int *key_arr, int n){
@@ -161,7 +141,7 @@ void DelNode(int key){
 	
 	switch (value){
 		case SearchFailure:
-			printf("Key %d is not available\n", key);
+			printf("Chave %d não disponivel\n", key);
 			break;
 		case LessKeys:
 			uproot = root;
@@ -179,27 +159,26 @@ enum KeyStatus del(struct no *ptr, int key){
 
 	if (ptr == NULL)
 		return SearchFailure;
-	/*Assigns values of no*/
+	/*atribui valores de no*/
 	n = ptr->n;
 	key_arr = ptr->keys;
 	p = ptr->p;
-	min = (M - 1) / 2;/*Minimum number of keys*/
+	min = (M - 1) / 2;/*Numero minimo de chaves*/
 
-					  //Search for key to delete
-	pos = searchPos(key, key_arr, n);
-	// p is a leaf
+	pos = searchPos(key, key_arr, n); //procura a chave a ser deletada
+	// p é uma folha
 	if (p[0] == NULL){
 		if (pos == n || key < key_arr[pos])
 			return SearchFailure;
-		/*Shift keys and pointers left*/
+		/*troca chaves e ponteiros da esquerda*/
 		for (i = pos + 1; i < n; i++){
 			key_arr[i - 1] = key_arr[i];
 			p[i] = p[i + 1];
 		}
 		return --ptr->n >= (ptr == root ? 1 : min) ? Success : LessKeys;
-	}/*End of if */
+	}
 
-	 //if found key but p is not a leaf
+	 //se achar a chave e o p não for uma folha
 	if (pos < n && key == key_arr[pos]){
 		struct no *qp = p[pos], *qp1;
 		int nkey;
@@ -210,19 +189,19 @@ enum KeyStatus del(struct no *ptr, int key){
 			if (qp1 == NULL)
 				break;
 			qp = qp1;
-		}/*End of while*/
+		}
 		key_arr[pos] = qp->keys[nkey - 1];
 		qp->keys[nkey - 1] = key;
-	}/*End of if */
+	}
 	value = del(p[pos], key);
 	if (value != LessKeys)
 		return value;
 
 	if (pos > 0 && p[pos - 1]->n > min){
-		pivot = pos - 1; /*pivot for left and right no*/
+		pivot = pos - 1; /*pivot para o no esquerdo e direito*/
 		lptr = p[pivot];
 		rptr = p[pos];
-		/*Assigns values for right no*/
+		/*atribui valores para o no direito*/
 		rptr->p[rptr->n + 1] = rptr->p[rptr->n];
 		for (i = rptr->n; i>0; i--){
 			rptr->keys[i] = rptr->keys[i - 1];
@@ -233,13 +212,13 @@ enum KeyStatus del(struct no *ptr, int key){
 		rptr->p[0] = lptr->p[lptr->n];
 		key_arr[pivot] = lptr->keys[--lptr->n];
 		return Success;
-	}/*End of if */
+	}
 	 //if (posn > min)
 	if (pos < n && p[pos + 1]->n > min){
-		pivot = pos; /*pivot for left and right no*/
+		pivot = pos; /*pivot para o no esquerdo e direito*/
 		lptr = p[pivot];
 		rptr = p[pivot + 1];
-		/*Assigns values for left no*/
+		/*atribui valores para o no esquerdo*/
 		lptr->keys[lptr->n] = key_arr[pivot];
 		lptr->p[lptr->n + 1] = rptr->p[0];
 		key_arr[pivot] = rptr->keys[0];
@@ -249,10 +228,10 @@ enum KeyStatus del(struct no *ptr, int key){
 		{
 			rptr->keys[i] = rptr->keys[i + 1];
 			rptr->p[i] = rptr->p[i + 1];
-		}/*End of for*/
+		}
 		rptr->p[rptr->n] = rptr->p[rptr->n + 1];
 		return Success;
-	}/*End of if */
+	}
 
 	if (pos == n)
 		pivot = pos - 1;
@@ -261,7 +240,7 @@ enum KeyStatus del(struct no *ptr, int key){
 
 	lptr = p[pivot];
 	rptr = p[pivot + 1];
-	/*merge right no with left no*/
+	/*fundi o no esquerdo com o direito*/
 	lptr->keys[lptr->n] = key_arr[pivot];
 	lptr->p[lptr->n + 1] = rptr->p[0];
 	for (i = 0; i < rptr->n; i++){
@@ -269,17 +248,14 @@ enum KeyStatus del(struct no *ptr, int key){
 		lptr->p[lptr->n + 2 + i] = rptr->p[i + 1];
 	}
 	lptr->n = lptr->n + rptr->n + 1;
-	free(rptr); /*Remove right no*/
+	free(rptr); /*remove o no direito*/
 	for (i = pos + 1; i < n; i++){
 		key_arr[i - 1] = key_arr[i];
 		p[i] = p[i + 1];
 	}
 	return --ptr->n >= (ptr == root ? 1 : min) ? Success : LessKeys;
-}/*End of del()*/
-
-/* Function to display each key in the tree in sorted order (in-order traversal)
-@param struct no *ptr, the pointer to the no you are currently working with
-*/
+}
+/* Função para imprimir cada chave na arvore em ordem */
 void inorder(struct no *ptr) {
 	if (ptr) {
 		if (ptr->n >= 1) {
@@ -293,10 +269,7 @@ void inorder(struct no *ptr) {
 		}
 	}
 }
-
-/* Function that returns the total number of keys in the tree.
-@param struct no *ptr, the pointer to the no you are currently working with
-*/
+/* Função que retorna o numero total de chaves na arvore */
 int totalKeys(struct no *ptr) {
 	if (ptr) {
 		int count = 1;
