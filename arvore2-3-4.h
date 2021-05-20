@@ -1,5 +1,5 @@
 /**********************************************************************
-    * Implementacao Arvore 2-3-4 em C++ Insercao, Busca e Remocao     *
+    * Implementacao Arvore 2-3-4 em C Insercao, Busca e Remocao       *
     * Estrutura de dados II                                           *
     * Professor: William Roberto Malvezzi                             *
     * UNICEUB - 20/05/2021 - Brasilia-DF                              *
